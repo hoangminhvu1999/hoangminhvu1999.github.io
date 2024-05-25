@@ -1,6 +1,11 @@
-import Image from "next/image";
+import { FC } from "react";
 
-export default function Home() {
+type Params = {
+
+};
+
+const ProjectPage: FC<Params> = ({ }) => {
+
   const styles = {
     container: [
       'bg-gray-900',
@@ -15,7 +20,9 @@ export default function Home() {
 
   return (
     <main className={styles.container}>
-      <h1>Home page</h1>
+      <h1>Project page</h1>
     </main>
   );
-}
+};
+
+export default ProjectPage;
