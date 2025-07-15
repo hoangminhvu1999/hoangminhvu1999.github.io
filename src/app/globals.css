@@ -3,31 +3,138 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 255, 255, 255;
+  --background-rgb: 13, 13, 13;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --background-rgb: 13, 13, 13;
   }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  
+  /* Hide scrollbar utility class */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
+
+@layer base {
+  :root {
+    /* Light theme - although we're focusing on dark theme from images */
+    --background: 0 0% 98%;
+    --foreground: 0 0% 9%;
+    --card: 0 0% 98%;
+    --card-foreground: 0 0% 9%;
+    --popover: 0 0% 98%;
+    --popover-foreground: 0 0% 9%;
+    --primary: 252 59% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 267 59% 48%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 240 4% 46%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 252 59% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5% 26%;
+    --input: 240 5% 26%;
+    --ring: 252 59% 48%;
+    --chart-1: 252 59% 48%;
+    --chart-2: 267 59% 48%;
+    --chart-3: 282 59% 48%;
+    --chart-4: 297 59% 48%;
+    --chart-5: 312 59% 48%;
+    --radius: 0.5rem;
+  }
+  
+  .dark {
+    /* Dark theme based on Cognify Metrics design */
+    --background: 240 10% 4%;
+    --foreground: 0 0% 100%;
+    --card: 240 10% 8%;
+    --card-foreground: 0 0% 100%;
+    --popover: 240 10% 8%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 252 59% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 267 59% 48%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 252 59% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 5% 26%;
+    --input: 240 5% 26%;
+    --ring: 252 59% 48%;
+    --chart-1: 252 59% 48%;
+    --chart-2: 267 59% 48%;
+    --chart-3: 282 59% 48%;
+    --chart-4: 297 59% 48%;
+    --chart-5: 312 59% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* New gradient text utility class for "Market Mastery" style */
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#e98ecc] to-[#7d6bff];
+  }
+  
+  /* Button styling similar to the purple buttons seen in the images */
+  .btn-primary {
+    @apply bg-primary hover:bg-primary/90 text-white rounded-md px-4 py-2 transition-colors;
+  }
+
+  /* Icon container with glow effect like in Cognify Metrics */
+  .icon-glow {
+    @apply flex items-center justify-center w-16 h-16 rounded-full bg-card relative overflow-hidden;
+  }
+
+  .icon-glow::before {
+    content: "";
+    @apply absolute inset-0 rounded-full;
+    background: radial-gradient(circle at center, rgba(125, 107, 255, 0.2) 0%, rgba(67, 56, 202, 0) 70%);
+  }
+
+  .icon-glow svg {
+    @apply relative z-10 text-primary h-6 w-6;
+  }
+
+  /* List items with colored dots like in Cognify Metrics */
+  .feature-list {
+    @apply space-y-2;
+  }
+
+  .feature-list-item {
+    @apply flex items-start gap-2;
+  }
+
+  .feature-list-item::before {
+    content: "";
+    @apply block w-2 h-2 mt-1.5 rounded-full bg-primary shrink-0;
   }
 }
