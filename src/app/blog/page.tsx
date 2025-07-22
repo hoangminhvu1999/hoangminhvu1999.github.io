@@ -239,6 +239,8 @@ const blogPosts = [
   }
 ];
 
+import { getBlogPosts } from '@/lib/blog';
+
 // Blog categories
 const categories = [
   'All Posts',
@@ -253,7 +255,8 @@ const categories = [
   'Product Strategy'
 ];
 
-const BlogPage: FC = () => {
+const BlogPage = async () => {
+  const blogPosts = getBlogPosts();
   return (
     <div className=" mx-auto">
       {/* Hero Section */}
@@ -299,25 +302,29 @@ const BlogPage: FC = () => {
       {/* Blog Posts Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
         {blogPosts.map((post) => (
-          <Link href={`/blog/${post.id}`} key={post.id} className="group">
+          <Link href={`/blog/${post.slug}`} key={post.slug} className="group">
             <div className="flex flex-col h-full bg-card rounded-lg border border-border overflow-hidden transition-all duration-200 hover:shadow-lg group-hover:border-primary/50">
               {/* Post Image */}
               <div className="relative h-64 overflow-hidden bg-muted">
-                <Image
-                  src={`${post.image}?auto=format&fit=crop&w=800&q=80`}
-                  alt={post.title}
-                  fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
+                {post.image && (
+                  <Image
+                    src={post.image}
+                    alt={post.title}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 group-hover:opacity-70 transition-opacity" />
               </div>
               
               {/* Content */}
               <div className="px-6 pt-6 pb-4 flex flex-col flex-grow">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/20 text-primary-foreground mb-4 w-fit">
-                  {post.category}
-                </span>
+                {post.category && (
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/20 text-primary-foreground mb-4 w-fit">
+                    {post.category}
+                  </span>
+                )}
                 
                 {/* Title */}
                 <h2 className="text-xl font-bold mb-3 line-clamp-2 group-hover:text-primary transition-colors">
@@ -328,14 +335,40 @@ const BlogPage: FC = () => {
                 <p className="text-muted-foreground text-sm line-clamp-3 mb-4">
                   {post.description}
                 </p>
+
+                {/* Tags */}
+                {post.tags && post.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {post.tags.map((tag) => (
+                      <span key={tag} className="inline-block bg-secondary text-secondary-foreground text-xs px-2 py-0.5 rounded-full">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 
                 {/* Author and Meta */}
                 <div className="flex items-center justify-between mt-auto">
                   <div className="flex items-center">
-                    <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
-                      <span className="text-xs font-medium text-secondary-foreground">AI</span>
+                    {post.authorImage ? (
+                      <Image
+                        src={post.authorImage}
+                        alt={post.author || 'Author'}
+                        width={32}
+                        height={32}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
+                        <span className="text-xs font-medium text-secondary-foreground">{post.author ? post.author[0] : 'A'}</span>
+                      </div>
+                    )}
+                    <div className="ml-2 flex flex-col">
+                      <span className="text-sm font-medium">{post.author}</span>
+                      {post.authorTitle && (
+                        <span className="text-xs text-muted-foreground">{post.authorTitle}</span>
+                      )}
                     </div>
-                    <span className="ml-2 text-sm">{post.author}</span>
                   </div>
                   
                   <div className="flex items-center text-muted-foreground text-sm">

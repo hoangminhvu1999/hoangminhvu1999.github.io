@@ -69,7 +69,7 @@ export function Header() {
     >
       <div 
         className={cn(
-          "container mx-auto flex h-14 items-center justify-between px-4 transition-all duration-300",
+          "container mx-auto flex h-14 items-center justify-between px-8 transition-all duration-300",
           isScrolled 
             ? "rounded-lg border border-border/50 bg-card/60 backdrop-blur-md shadow-sm" 
             : "rounded-full border border-border/30 bg-card/30 backdrop-blur-sm"
