@@ -40,4 +40,20 @@ export function getBlogPosts(): BlogPost[] {
       content,
     };
   });
+}
+
+export function getPaginatedBlogPosts(page: number, pageSize: number = 12) {
+  const allPosts = getBlogPosts();
+  const totalPosts = allPosts.length;
+  const totalPages = Math.ceil(totalPosts / pageSize);
+  const currentPage = Math.max(1, Math.min(page, totalPages));
+  const startIdx = (currentPage - 1) * pageSize;
+  const endIdx = startIdx + pageSize;
+  const posts = allPosts.slice(startIdx, endIdx);
+  return {
+    posts,
+    totalPages,
+    totalPosts,
+    currentPage,
+  };
 } 

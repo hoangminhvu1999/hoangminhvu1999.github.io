@@ -49,8 +49,9 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function BlogPost({ params }: { params: { slug: string } }) {
-  const post = await getPost(params.slug);
+export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
+  const slug = (await params).slug;
+  const post = await getPost(slug);
 
   return (
     <div className="bg-background text-foreground min-h-screen">
