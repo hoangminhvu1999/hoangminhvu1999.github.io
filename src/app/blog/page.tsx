@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { getPaginatedBlogPosts } from "@/lib/blog";
+import { Input } from "@/components/ui/input";
 
 // Blog categories
 const categories = [
@@ -26,10 +27,14 @@ const PAGE_SIZE = 12;
 function getPagination(current: number, total: number, delta = 2) {
   const range: (number | string)[] = [];
   const rangeWithDots: (number | string)[] = [];
-  let l: number;
+  let l: number | undefined;
 
   for (let i = 1; i <= total; i++) {
-    if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+    if (
+      i === 1 ||
+      i === total ||
+      (i >= current - delta && i <= current + delta)
+    ) {
       range.push(i);
     }
   }
@@ -39,7 +44,7 @@ function getPagination(current: number, total: number, delta = 2) {
       if ((range[i] as number) - l === 2) {
         rangeWithDots.push(l + 1);
       } else if ((range[i] as number) - l !== 1) {
-        rangeWithDots.push('...');
+        rangeWithDots.push("...");
       }
     }
     rangeWithDots.push(range[i]);
@@ -53,21 +58,27 @@ const BlogPage = async ({
 }: {
   searchParams?: { [key: string]: string | string[] | undefined };
 }) => {
-  // Get page from search params, default to 1
+  // Get page and search from search params, default to 1 and empty
   let page = 1;
+  let search = "";
   const params = await searchParams;
-  if (params && params.page) {
-    const pageParam = Array.isArray(params.page)
-      ? params.page[0]
-      : params.page;
-    const parsed = parseInt(pageParam, 10);
-    if (!isNaN(parsed) && parsed > 0) page = parsed;
+  if (params) {
+    if (params.page) {
+      const pageParam = Array.isArray(params.page) ? params.page[0] : params.page;
+      const parsed = parseInt(pageParam, 10);
+      if (!isNaN(parsed) && parsed > 0) page = parsed;
+    }
+    if (params.search) {
+      search = Array.isArray(params.search) ? params.search[0] : params.search;
+    }
   }
+  
   const {
     posts: blogPosts,
     totalPages,
     currentPage,
-  } = getPaginatedBlogPosts(page, PAGE_SIZE);
+    totalPosts,
+  } = getPaginatedBlogPosts(page, PAGE_SIZE, search);
 
   return (
     <div className=" mx-auto">
@@ -86,15 +97,35 @@ const BlogPage = async ({
 
         {/* Search Bar */}
         <div className="relative max-w-xl mx-auto mt-8">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <Search className="h-5 w-5 text-muted-foreground" />
-          </div>
-          <input
-            type="text"
-            placeholder="Search articles..."
-            className="w-full py-3 pl-10 pr-4 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-          />
+          <form action="/blog" method="GET" className="flex gap-2">
+            <div className="relative flex-1">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <Search className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <Input
+                type="text"
+                name="search"
+                placeholder="Search articles..."
+                defaultValue={search}
+                className="w-full py-3 pl-10 pr-4 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+            <Button
+              type="submit"
+              size="sm"
+              className="px-6 bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              Search
+            </Button>
+          </form>
         </div>
+        
+        {/* Search Results Info */}
+        {search && (
+          <div className="mt-4 text-sm text-muted-foreground">
+            Found {totalPosts} result{totalPosts !== 1 ? 's' : ''} for "{search}"
+          </div>
+        )}
       </section>
 
       {/* Categories */}
@@ -203,27 +234,88 @@ const BlogPage = async ({
         ))}
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-center mt-12 gap-2">
-        {getPagination(currentPage, totalPages).map((p, idx) =>
-          p === "..." ? (
-            <span key={"ellipsis-" + idx} className="px-3 py-2 text-muted-foreground">...</span>
-          ) : (
-            <Link
-              key={p}
-              href={`/blog?page=${p}`}
-              className={`px-4 py-2 rounded border text-sm font-medium transition-colors ${
-                p === currentPage
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-background text-foreground border-border hover:bg-muted"
-              }`}
-              aria-current={p === currentPage ? "page" : undefined}
-            >
-              {p}
+      {/* No Results Message */}
+      {blogPosts.length === 0 && search && (
+        <div className="text-center py-16">
+          <div className="max-w-md mx-auto">
+            {/* Icon */}
+            <div className="mb-6 flex justify-center">
+              <div className="w-20 h-20 rounded-full bg-muted/50 flex items-center justify-center">
+                <Search className="h-10 w-10 text-muted-foreground/60" />
+              </div>
+            </div>
+            
+            {/* Title */}
+            <h3 className="text-2xl font-semibold mb-3 text-foreground">
+              No articles found
+            </h3>
+            
+            {/* Description */}
+            <p className="text-muted-foreground text-lg mb-6">
+              We couldn't find any articles matching <span className="font-medium text-foreground">"{search}"</span>
+            </p>
+            
+            {/* Suggestions */}
+            <div className="bg-card border border-border rounded-lg p-6 mb-6">
+              <h4 className="font-medium mb-3 text-foreground">Try these suggestions:</h4>
+              <ul className="text-sm text-muted-foreground space-y-2 text-left">
+                <li className="flex items-center">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full mr-3"></span>
+                  Check your spelling
+                </li>
+                <li className="flex items-center">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full mr-3"></span>
+                  Use more general keywords
+                </li>
+                <li className="flex items-center">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full mr-3"></span>
+                  Try different search terms
+                </li>
+              </ul>
+            </div>
+            
+            {/* Action Button */}
+            <Link href="/blog">
+              <Button 
+                variant="outline" 
+                className="gap-2"
+              >
+                <Search className="h-4 w-4" />
+                Browse all articles
+              </Button>
             </Link>
-          )
-        )}
-      </div>
+          </div>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-12 gap-2">
+          {getPagination(currentPage, totalPages).map((p, idx) =>
+            p === "..." ? (
+              <span
+                key={"ellipsis-" + idx}
+                className="px-3 py-2 text-muted-foreground"
+              >
+                ...
+              </span>
+            ) : (
+              <Link
+                key={p}
+                href={`/blog?page=${p}${search ? `&search=${encodeURIComponent(search)}` : ''}`}
+                className={`px-4 py-2 rounded border text-sm font-medium transition-colors ${
+                  p === currentPage
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-background text-foreground border-border hover:bg-muted"
+                }`}
+                aria-current={p === currentPage ? "page" : undefined}
+              >
+                {p}
+              </Link>
+            )
+          )}
+        </div>
+      )}
     </div>
   );
 };

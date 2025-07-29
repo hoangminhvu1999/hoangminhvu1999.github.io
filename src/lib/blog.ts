@@ -42,8 +42,27 @@ export function getBlogPosts(): BlogPost[] {
   });
 }
 
-export function getPaginatedBlogPosts(page: number, pageSize: number = 12) {
-  const allPosts = getBlogPosts();
+export function getPaginatedBlogPosts(page: number, pageSize: number = 12, search?: string) {
+  let allPosts = getBlogPosts();
+  
+  // Filter posts by search term if provided
+  if (search && search.trim()) {
+    const searchTerms = search.toLowerCase().trim().split(' ').filter(term => term.length > 0);
+    allPosts = allPosts.filter((post) => {
+      const searchableText = [
+        post.title,
+        post.description,
+        post.content,
+        ...(post.tags || []),
+        post.category || '',
+        post.author || ''
+      ].join(' ').toLowerCase();
+      
+      // Check if all search terms are found in the searchable text (partial matching)
+      return searchTerms.every(term => searchableText.includes(term));
+    });
+  }
+  
   const totalPosts = allPosts.length;
   const totalPages = Math.ceil(totalPosts / pageSize);
   const currentPage = Math.max(1, Math.min(page, totalPages));
