@@ -42,8 +42,15 @@ export function getBlogPosts(): BlogPost[] {
   });
 }
 
-export function getPaginatedBlogPosts(page: number, pageSize: number = 12, search?: string) {
+export function getPaginatedBlogPosts(page: number, pageSize: number = 12, search?: string, category?: string) {
   let allPosts = getBlogPosts();
+  
+  // Filter posts by category if provided
+  if (category && category.trim()) {
+    allPosts = allPosts.filter((post) => 
+      post.category && post.category.toLowerCase() === category.toLowerCase()
+    );
+  }
   
   // Filter posts by search term if provided
   if (search && search.trim()) {
@@ -75,4 +82,14 @@ export function getPaginatedBlogPosts(page: number, pageSize: number = 12, searc
     totalPosts,
     currentPage,
   };
+} 
+
+export function getBlogCategories(): string[] {
+  const posts = getBlogPosts();
+  const categories = posts
+    .map(post => post.category)
+    .filter((category): category is string => category !== undefined && category.trim() !== '');
+  
+  // Remove duplicates and sort alphabetically
+  return [...new Set(categories)].sort();
 } 

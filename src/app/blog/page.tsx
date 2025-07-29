@@ -1,25 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Clock, Search } from "lucide-react";
+import { Clock, Search, Filter } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { getPaginatedBlogPosts } from "@/lib/blog";
+import { getPaginatedBlogPosts, getBlogCategories } from "@/lib/blog";
 import { Input } from "@/components/ui/input";
-
-// Blog categories
-const categories = [
-  "All Posts",
-  "Market Intelligence",
-  "E-commerce",
-  "AI Trends",
-  "Case Studies",
-  "Analytics",
-  "ROI",
-  "Cost Savings",
-  "Predictive Analytics",
-  "Product Strategy",
-];
 
 const PAGE_SIZE = 12;
 
@@ -58,9 +44,10 @@ const BlogPage = async ({
 }: {
   searchParams?: { [key: string]: string | string[] | undefined };
 }) => {
-  // Get page and search from search params, default to 1 and empty
+  // Get page, search, and category from search params, default to 1, empty, and empty
   let page = 1;
   let search = "";
+  let category = "";
   const params = await searchParams;
   if (params) {
     if (params.page) {
@@ -71,6 +58,9 @@ const BlogPage = async ({
     if (params.search) {
       search = Array.isArray(params.search) ? params.search[0] : params.search;
     }
+    if (params.category) {
+      category = Array.isArray(params.category) ? params.category[0] : params.category;
+    }
   }
   
   const {
@@ -78,7 +68,11 @@ const BlogPage = async ({
     totalPages,
     currentPage,
     totalPosts,
-  } = getPaginatedBlogPosts(page, PAGE_SIZE, search);
+  } = getPaginatedBlogPosts(page, PAGE_SIZE, search, category);
+
+  // Get categories from the blog posts
+  const categories = getBlogCategories();
+  const allCategories = ["All Posts", ...categories];
 
   return (
     <div className=" mx-auto">
@@ -123,23 +117,66 @@ const BlogPage = async ({
         {/* Search Results Info */}
         {search && (
           <div className="mt-4 text-sm text-muted-foreground">
-            Found {totalPosts} result{totalPosts !== 1 ? 's' : ''} for "{search}"
+            Found {totalPosts} result{totalPosts !== 1 ? 's' : ''} for {`"${search}"`}
           </div>
         )}
       </section>
 
-      {/* Categories */}
-      <div className="flex gap-2 mb-10 justify-start md:justify-center pb-2 hide-scrollbar">
-        {categories.map((category) => (
-          <Button
-            key={category}
-            variant={category === "All Posts" ? "default" : "outline"}
-            className="rounded-full text-sm whitespace-nowrap"
-            size="sm"
-          >
-            {category}
-          </Button>
-        ))}
+      {/* Modern Categories Section */}
+      <div className="mb-10">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+            <Filter className="h-4 w-4" />
+            Filter by category:
+          </div>
+          {category && (
+            <Link href="/blog">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 px-2 text-xs"
+              >
+                Clear filter
+              </Button>
+            </Link>
+          )}
+        </div>
+        
+        <div className="flex flex-wrap gap-3">
+          {allCategories.map((cat) => {
+            const isActive = cat === "All Posts" ? !category : cat === category;
+            const href = cat === "All Posts" 
+              ? `/blog${search ? `?search=${encodeURIComponent(search)}` : ''}`
+              : `/blog?category=${encodeURIComponent(cat)}${search ? `&search=${encodeURIComponent(search)}` : ''}`;
+            
+            return (
+              <Link key={cat} href={href}>
+                <Button
+                  variant={isActive ? "default" : "outline"}
+                  className={`rounded-full text-sm font-medium transition-all duration-200 ${
+                    isActive 
+                      ? "bg-primary text-primary-foreground shadow-md hover:shadow-lg" 
+                      : "hover:bg-muted/50 border-border hover:border-primary/30"
+                  }`}
+                  size="sm"
+                >
+                  {cat}
+                  {isActive && (
+                    <div className="ml-2 w-1.5 h-1.5 bg-primary-foreground rounded-full animate-pulse" />
+                  )}
+                </Button>
+              </Link>
+            );
+          })}
+        </div>
+        
+        {/* Active filter indicator */}
+        {category && (
+          <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="w-2 h-2 bg-primary rounded-full" />
+            <span>Showing posts in: <span className="font-medium text-foreground">{category}</span></span>
+          </div>
+        )}
       </div>
 
       {/* Blog Posts Grid */}
@@ -302,7 +339,7 @@ const BlogPage = async ({
             ) : (
               <Link
                 key={p}
-                href={`/blog?page=${p}${search ? `&search=${encodeURIComponent(search)}` : ''}`}
+                href={`/blog?page=${p}${search ? `&search=${encodeURIComponent(search)}` : ''}${category ? `&category=${encodeURIComponent(category)}` : ''}`}
                 className={`px-4 py-2 rounded border text-sm font-medium transition-colors ${
                   p === currentPage
                     ? "bg-primary text-primary-foreground border-primary"
