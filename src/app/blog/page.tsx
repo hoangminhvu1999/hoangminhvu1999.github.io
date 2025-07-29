@@ -78,7 +78,7 @@ const BlogPage = async ({
     <div className=" mx-auto">
       {/* Hero Section */}
       <section className="mb-12 py-16 text-center">
-        <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full bg-primary/20 text-primary-foreground text-sm font-medium">
+        <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full bg-primary text-primary-foreground text-sm font-medium">
           Our Blog
         </div>
         <h1 className="text-4xl md:text-5xl font-bold mb-4">
