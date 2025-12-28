@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Under Construction | Hoang Minh Vu</title>
+  <meta name="description" content="This page is currently under construction. Check back soon for updates." />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="under-construction.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
+
+  <!-- Main Container -->
+  <main class="min-h-screen flex items-center justify-center relative overflow-hidden p-4">
+
+    <!-- Background Effects (Consistent with Theme) -->
+    <div
+      class="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-cyan-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 -z-10">
+    </div>
+    <div class="absolute inset-0 opacity-30 dark:opacity-20 pointer-events-none -z-10">
+      <div
+        class="absolute top-20 left-10 w-72 h-72 bg-indigo-300 dark:bg-indigo-600 rounded-full mix-blend-multiply filter blur-3xl animate-blob">
+      </div>
+      <div
+        class="absolute top-40 right-10 w-72 h-72 bg-cyan-300 dark:bg-cyan-600 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000">
+      </div>
+      <div
+        class="absolute bottom-20 left-1/2 w-72 h-72 bg-purple-300 dark:bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000">
+      </div>
+    </div>
+
+    <!-- Content Card -->
+    <div class="relative z-10 max-w-lg w-full text-center">
+
+      <!-- Illustration -->
+      <div class="mb-8 relative group">
+        <div
+          class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200">
+        </div>
+        <div
+          class="relative bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-xl ring-1 ring-gray-900/5 dark:ring-white/10">
+          <img src="../images/construction.png" alt="Under Construction" class="w-full h-auto rounded-lg" />
+        </div>
+      </div>
+
+      <!-- Text Content -->
+      <h1 class="text-3xl sm:text-4xl font-extrabold mb-4">
+        <span class="text-gray-900 dark:text-white">Under </span>
+        <span class="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">Construction</span>
+      </h1>
+
+      <p class="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+        I'm currently working on this page to bring you something amazing.
+        Please check back soon for updates!
+      </p>
+
+      <!-- Action Button -->
+      <a href="../index.html"
+        class="inline-flex items-center justify-center px-8 py-3 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-500 text-white font-semibold shadow-lg hover:shadow-indigo-500/30 transform hover:-translate-y-0.5 transition-all duration-300 group">
+        <svg class="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none"
+          stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Return to Home
+      </a>
+
+    </div>
+  </main>
+
+  <!-- Script for Theme Toggle Consistency -->
+  <script src="../script.js"></script>
+
+</body>
+
+</html>
